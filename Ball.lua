@@ -11,8 +11,7 @@
     and walls until it passes a left or right boundary of the screen,
     scoring a point for the opponent.
 ]]
-
-Ball = Class{}
+Ball = Class {}
 
 function Ball:init(x, y, width, height)
     self.x = x
@@ -41,7 +40,7 @@ function Ball:collides(paddle)
     -- edge of the other
     if self.y > paddle.y + paddle.height or paddle.y > self.y + self.height then
         return false
-    end 
+    end
 
     -- if the above aren't true, they're overlapping
     return true
@@ -63,5 +62,5 @@ function Ball:update(dt)
 end
 
 function Ball:render()
-    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
+    love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end

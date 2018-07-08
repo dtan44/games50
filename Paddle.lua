@@ -10,8 +10,7 @@
     Represents a paddle that can move up and down. Used in the main
     program to deflect the ball back toward the opponent.
 ]]
-
-Paddle = Class{}
+Paddle = Class {}
 
 --[[
     The `init` function on our class is called just once, when the object
@@ -32,6 +31,7 @@ function Paddle:init(x, y, width, height)
     self.width = width
     self.height = height
     self.dy = 0
+    self.dx = 0
 end
 
 function Paddle:update(dt)
@@ -40,13 +40,19 @@ function Paddle:update(dt)
     -- go into the negatives; the movement calculation is simply our
     -- previously-defined paddle speed scaled by dt
     if self.dy < 0 then
-        self.y = math.max(0, self.y + self.dy * dt)
-    -- similar to before, this time we use math.min to ensure we don't
-    -- go any farther than the bottom of the screen minus the paddle's
-    -- height (or else it will go partially below, since position is
-    -- based on its top left corner)
+        -- similar to before, this time we use math.min to ensure we don't
+        -- go any farther than the bottom of the screen minus the paddle's
+        -- height (or else it will go partially below, since position is
+        -- based on its top left corner)
+        self.y = math.max(20, self.y + self.dy * dt)
     else
-        self.y = math.min(VIRTUAL_HEIGHT - self.height, self.y + self.dy * dt)
+        self.y = math.min(VIRTUAL_HEIGHT - self.height - 20, self.y + self.dy * dt)
+    end
+
+    if self.dx < 0 then
+        self.x = math.max(20, self.x + self.dx * dt)
+    else
+        self.x = math.min(VIRTUAL_WIDTH - self.width - 20, self.x + self.dx * dt)
     end
 end
 
@@ -58,5 +64,5 @@ end
     newest version of LÖVE2D, you can even draw rounded rectangles!
 ]]
 function Paddle:render()
-    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
+    love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
