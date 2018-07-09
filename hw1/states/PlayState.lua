@@ -7,8 +7,7 @@
     avoids pipes. When the player collides with a pipe, we should go to the GameOver state, where
     we then go back to the main menu.
 ]]
-
-PlayState = Class{__includes = BaseState}
+PlayState = Class {__includes = BaseState}
 
 PIPE_SPEED = 60
 PIPE_WIDTH = 70
@@ -27,17 +26,21 @@ function PlayState:init()
     self.lastY = -PIPE_HEIGHT + math.random(80) + 20
 end
 
+local PIPE_SPAWN_TIME = 2
 function PlayState:update(dt)
     -- update timer for pipe spawning
     self.timer = self.timer + dt
 
-    -- spawn a new pipe pair every second and a half
-    if self.timer > 2 then
+    -- spawn a new pipe pair every x random seconds
+    if self.timer > PIPE_SPAWN_TIME then
+        -- Pset Part 2
+        PIPE_SPAWN_TIME = math.random(2, 4)
+
         -- modify the last Y coordinate we placed so pipe gaps aren't too far apart
         -- no higher than 10 pixels below the top edge of the screen,
         -- and no lower than a gap length (90 pixels) from the bottom
-        local y = math.max(-PIPE_HEIGHT + 10, 
-            math.min(self.lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+        local y =
+            math.max(-PIPE_HEIGHT + 10, math.min(self.lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
         self.lastY = y
 
         -- add a new pipe pair at the end of the screen at our new Y
@@ -55,7 +58,7 @@ function PlayState:update(dt)
             if pair.x + PIPE_WIDTH < self.bird.x then
                 self.score = self.score + 1
                 pair.scored = true
-                sounds['score']:play()
+                sounds["score"]:play()
             end
         end
 
@@ -77,12 +80,15 @@ function PlayState:update(dt)
     for k, pair in pairs(self.pipePairs) do
         for l, pipe in pairs(pair.pipes) do
             if self.bird:collides(pipe) then
-                sounds['explosion']:play()
-                sounds['hurt']:play()
+                sounds["explosion"]:play()
+                sounds["hurt"]:play()
 
-                gStateMachine:change('score', {
-                    score = self.score
-                })
+                gStateMachine:change(
+                    "score",
+                    {
+                        score = self.score
+                    }
+                )
             end
         end
     end
@@ -92,12 +98,26 @@ function PlayState:update(dt)
 
     -- reset if we get to the ground
     if self.bird.y > VIRTUAL_HEIGHT - 15 then
-        sounds['explosion']:play()
-        sounds['hurt']:play()
+        sounds["explosion"]:play()
+        sounds["hurt"]:play()
 
-        gStateMachine:change('score', {
-            score = self.score
-        })
+        gStateMachine:change(
+            "score",
+            {
+                score = self.score
+            }
+        )
+    end
+
+    if love.keyboard.wasPressed("p") then
+        gStateMachine:change(
+            "pause",
+            {
+                bird = self.bird,
+                pipePairs = self.pipePairs,
+                score = self.score
+            }
+        )
     end
 end
 
@@ -107,7 +127,7 @@ function PlayState:render()
     end
 
     love.graphics.setFont(flappyFont)
-    love.graphics.print('Score: ' .. tostring(self.score), 8, 8)
+    love.graphics.print("Score: " .. tostring(self.score), 8, 8)
 
     self.bird:render()
 end
@@ -115,9 +135,17 @@ end
 --[[
     Called when this state is transitioned to from another state.
 ]]
-function PlayState:enter()
+function PlayState:enter(params)
     -- if we're coming from death, restart scrolling
     scrolling = true
+
+    -- Pset Part 4
+    -- reinstate values if params are set
+    if params and params.bird and params.pipePairs and params.score then
+        self.bird = params.bird
+        self.pipePairs = params.pipePairs
+        self.score = params.score
+    end
 end
 
 --[[

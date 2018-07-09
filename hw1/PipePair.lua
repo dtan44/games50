@@ -7,11 +7,7 @@
     Used to represent a pair of pipes that stick together as they scroll, providing an opening
     for the player to jump through in order to score a point.
 ]]
-
-PipePair = Class{}
-
--- size of the gap between pipes
-local GAP_HEIGHT = 90
+PipePair = Class {}
 
 function PipePair:init(y)
     -- flag to hold whether this pair has been scored (jumped through)
@@ -23,10 +19,14 @@ function PipePair:init(y)
     -- y value is for the topmost pipe; gap is a vertical shift of the second lower pipe
     self.y = y
 
+    -- Pset Part 1
+    -- initialize gap between pipes to be random
+    local gap_height = math.random(85, 95)
+
     -- instantiate two pipes that belong to this pair
     self.pipes = {
-        ['upper'] = Pipe('top', self.y),
-        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + GAP_HEIGHT)
+        ["upper"] = Pipe("top", self.y),
+        ["lower"] = Pipe("bottom", self.y + PIPE_HEIGHT + gap_height)
     }
 
     -- whether this pipe pair is ready to be removed from the scene
@@ -38,8 +38,8 @@ function PipePair:update(dt)
     -- else move it from right to left
     if self.x > -PIPE_WIDTH then
         self.x = self.x - PIPE_SPEED * dt
-        self.pipes['lower'].x = self.x
-        self.pipes['upper'].x = self.x
+        self.pipes["lower"].x = self.x
+        self.pipes["upper"].x = self.x
     else
         self.remove = true
     end
